@@ -1,0 +1,160 @@
+NAME
+    SOFE3950U: Operating Systems -- A Simple Shell
+
+AUTHOR
+    Hashir Rashid -- 100910330
+
+SYNOPSIS
+    ./myshell
+    ./myshell [batchfile]
+
+DESCRIPTION
+    Operation
+        Once downloaded, run the "make" command to compile the shell. 
+        
+        To run the shell with line-by-line input, enter "./myshell" in the directory where the make 
+        created the compiled file "myshell". 
+
+        To run the shell with a batchfile, enter "./myshell [batchfile]". The shell will terminate 
+        once the batchfile has reached the end-of-file (EOF).
+    
+    Commands
+        Below is a list of every command the shell accepts and their usage.
+
+        cd
+            Usage:
+                cd
+                cd [directory]
+            
+            Description:
+                Changes the working directory to the specified one. Works with quotation marks (ex. 
+                cd "Lab 2"). To specify an absolute path, the directory must begin with '/'. If a 
+                directory is not given, the shell reports the current working directory.
+        
+        clr
+            Usage:
+                clr
+            
+            Description:
+                Clears the terminal.
+        
+        dir
+            Usage:
+                dir
+                dir > [outputfile]
+                dir >> [outputfile]
+                dir [directory]
+                dir [directory] > [outputfile]
+                dir [directory] >> [outputfile]
+            
+            Description:
+                Lists all files and directories in the specified directory. Does not search 
+                recursively. Works with quotation marks (ex. dir "Lab 2"). To specify an absolute 
+                path, the directory must begin with '/'. If a directory is not given, the shell 
+                reports the files in the current working directory. The output can be redirected 
+                using '>' to overwrite the specified file, or '>>' to append to the specified file.
+        
+        environ
+            Usage:
+                environ
+                environ > [outputfile]
+                environ >> [outputfile]
+            
+            Description:
+                Lists all the environment variables for the current user. The output can be 
+                redirected using '>' to overwrite the specified file, or '>>' to append to the 
+                specified file.
+        
+        echo
+            Usage:
+                echo
+                echo > [outputfile]
+                echo >> [outputfile]
+                echo [comment]
+                echo [comment] > [outputfile]
+                echo [comment] >> [outputfile]
+            
+            Description:
+                Displays the entered comment. Does not preserve the whitespace of the original 
+                comment. If no comment is provided, displays a newline. The output can be 
+                redirected using '>' to overwrite the specified file, or '>>' to append to the 
+                specified file.
+        
+        help
+            Usage:
+                help
+                help > [outputfile]
+                help >> [outputfile]
+
+            Description:
+                Displays the contents of this file, using the "more" filter. The output can be 
+                redirected using '>' to overwrite the specified file, or '>>' to append to the 
+                specified file.
+        
+        pause
+            Usage:
+                pause
+            
+            Description:
+                Pauses the shell until 'Enter' is pressed. Does not pause child processes.
+        quit
+            Usage:
+                quit
+            
+            Description:
+                Terminates and exits the shell.
+        perm
+            Usage:
+                perm [octal code] [filename]
+            
+            Description:
+                Changes the permissions of the specified file based on the entered octal code (ex. 
+                using code 700 will set all permissions for users and no permissions for groups or 
+                others).
+
+    Program Invocation
+        If the input does not match any of the shell commands (internal or external), the shell 
+        assumes the input as program invocation. If the file is not found, the shell will return an 
+        error and continue asking for input. The shell assumes the following format when a program 
+        is invoked:
+
+        [filename] [arg1] [arg2] ... [argn] < [input] > [output]
+
+        Note that the file name does NOT need to be proceeded with "./", the shell will execute the 
+        program regardless if it is present or not. Also note that one or both of the i/o 
+        redirection operators are not required, as described below in "I/O Redirection".
+
+    Environment
+        The shell automatically adapts to any directory. An environment variable named "shell" is 
+        created and added to the environment variables list automatically when the shell is run 
+        (regardless if it was run normally or through a batchfile). Additionally, a second 
+        environment variable named "parent" is added to the environment variables list by the child 
+        process created by program invocation. This variable ONLY exists within the child and as 
+        such cannot be accessed by the parent. This allows the shell to handle external commands 
+        such as "ls -l" as expected.
+
+    I/O Redirection
+        Internal commands 'dir', 'environ', 'echo', and 'help' support output redirection using '>' 
+        (to overwrite) or '>>' (to append) followed by a filename.
+
+        If a program is invoked, both input ('<') and output ('>', '>>') operators may be used, in 
+        any order. If one or both of the i/o streams are not included, or return an error, the 
+        shell will default to stdin / stdout for the offending stream (ex. if the output stream is 
+        missing, the shell defaults to stdout). The shell assumes that the arguments and operators 
+        are delimited by a single space. Sample inputs below.
+
+            echo hello there > [outputfile]
+            [programname] < [inputfile]
+            [programname] > [outputfile]
+            [programname] [arg1] [arg2] < [inputfile] > [outputfile]
+
+    Background Execution
+        If the shell finds an '&' as the final argument of the input, it will run the command in 
+        the background. The shell will confirm this and display a message using stdout to confirm 
+        the process is in the background. The shell immediately accepts input once again when a 
+        command is run in the background. Note this only works when running a program or using 
+        external commands. Internal commands do not support background execution. Sample inputs 
+        below.
+
+            [programname] < [inputfile] &
+            [programname] < [inputfile] > [outputfile] &
